@@ -23,19 +23,16 @@ public class Flight {
 
     private String flightTime;
 
-    private String price;
-
     public Flight() {
     }
 
-    public Flight(UUID id, String departure, Destination destination, String departureTime, String arrivalTime, String flightTime, String price) {
+    public Flight(UUID id, String departure, Destination destination, String departureTime, String arrivalTime, String flightTime) {
         this.id = id;
         this.departure = departure;
         this.destination = destination;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.flightTime = flightTime;
-        this.price = price;
     }
 
     public UUID getId() {
@@ -84,13 +81,5 @@ public class Flight {
 
     public void setFlightTime(String flightTime) {
         this.flightTime = flightTime;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
     }
 }
