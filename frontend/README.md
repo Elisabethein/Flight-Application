@@ -27,3 +27,10 @@ npm run dev
 ```sh
 npm run build
 ```
+
+
+### Picture acknowledgements
+https://unsplash.com/photos/santorini-greece-XGKaRnWjv1c
+https://unsplash.com/photos/aerial-view-photography-of-boats-on-seashore-2ueUnL4CkV8
+https://unsplash.com/photos/flying-airplane-iDFumFZ5fFw
+https://unsplash.com/photos/rialto-bridge-venice-italy-hFXZ5cNfkOk

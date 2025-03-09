@@ -2,7 +2,7 @@
   <body>
   <header class="header">
     <div class="logo-container">
-      <img src="../assets/plane_exp.png" alt="Logo" class="logo" />
+      <img src="../assets/plane.png" alt="Logo" class="logo" />
     </div>
   </header>
   </body>

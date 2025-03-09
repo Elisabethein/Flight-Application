@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from "@/pages/MainPage.vue";
+import FlightPage from "@/pages/FlightPage.vue";
 
 const routes = [
     {
@@ -7,6 +8,11 @@ const routes = [
         name: 'MainPage',
         component: MainPage,
     },
+    {
+        path: '/flight',
+        name: 'Flight',
+        component: FlightPage,
+    }
 ];
 
 const router = createRouter({

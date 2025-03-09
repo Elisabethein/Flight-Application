@@ -13,9 +13,7 @@ public class Flight {
 
     private String departure;
 
-    @ManyToOne
-    @JoinColumn(name = "destination_id")
-    private Destination destination;
+    private String destination;
 
     private String departureTime;
 
@@ -23,16 +21,18 @@ public class Flight {
 
     private String flightTime;
 
+    private Double price;
+
     public Flight() {
     }
 
-    public Flight(UUID id, String departure, Destination destination, String departureTime, String arrivalTime, String flightTime) {
-        this.id = id;
+    public Flight(String departure, String destination, String departureTime, String arrivalTime, String flightTime, Double price) {
         this.departure = departure;
         this.destination = destination;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.flightTime = flightTime;
+        this.price = price;
     }
 
     public UUID getId() {
@@ -51,11 +51,11 @@ public class Flight {
         this.departure = departure;
     }
 
-    public Destination getDestination() {
+    public String getDestination() {
         return destination;
     }
 
-    public void setDestination(Destination destination) {
+    public void setDestination(String destination) {
         this.destination = destination;
     }
 
@@ -82,4 +82,13 @@ public class Flight {
     public void setFlightTime(String flightTime) {
         this.flightTime = flightTime;
     }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
 }

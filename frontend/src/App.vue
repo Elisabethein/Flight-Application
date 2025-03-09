@@ -20,4 +20,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Junge&display=swap');
+#app {
+  font-family: 'Junge',cursive;
+}
 </style>

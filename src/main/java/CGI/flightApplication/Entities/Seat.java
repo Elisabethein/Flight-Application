@@ -15,7 +15,7 @@ public class Seat {
 
     private String seatClass;
 
-    private String seatPrice;
+    private Double seatPrice;
     @ManyToOne
     @JoinColumn(name = "flight_id")
     private Flight flight;
@@ -27,8 +27,7 @@ public class Seat {
     public Seat() {
     }
 
-    public Seat(UUID id, String seatNumber, String seatClass, String seatPrice, Flight flight, Boolean isBooked, Boolean hasLegRoom) {
-        this.id = id;
+    public Seat(String seatNumber, String seatClass, Double seatPrice, Flight flight, Boolean isBooked, Boolean hasLegRoom) {
         this.seatNumber = seatNumber;
         this.seatClass = seatClass;
         this.seatPrice = seatPrice;
@@ -61,11 +60,11 @@ public class Seat {
         this.seatClass = seatClass;
     }
 
-    public String getSeatPrice() {
+    public Double getSeatPrice() {
         return seatPrice;
     }
 
-    public void setSeatPrice(String seatPrice) {
+    public void setSeatPrice(Double seatPrice) {
         this.seatPrice = seatPrice;
     }
 

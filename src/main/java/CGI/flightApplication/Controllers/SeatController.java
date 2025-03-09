@@ -19,12 +19,12 @@ public class SeatController {
     }
 
     @PutMapping("/book/{id}")
-    public ResponseEntity<Seat> bookSeat(@PathVariable UUID id) {
+    public ResponseEntity<String> bookSeat(@PathVariable UUID id) {
         try {
-            Seat seat = seatService.bookSeat(id);
-            return ResponseEntity.ok(seat);
+            seatService.bookSeat(id);
+            return ResponseEntity.ok("Seat booked successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).body("Internal Server Error");
         }
     }
 }
