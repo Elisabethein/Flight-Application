@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,10 +19,14 @@ public class SeatController {
         this.seatService = seatService;
     }
 
-    @PutMapping("/book/{id}")
-    public ResponseEntity<String> bookSeat(@PathVariable UUID id) {
+    @PutMapping("/book")
+    public ResponseEntity<String> bookSeat(@RequestBody List<UUID> seatIds) {
+        System.out.println("SeatIds:" + seatIds);
         try {
-            seatService.bookSeat(id);
+            for (UUID seatId : seatIds) {
+                System.out.println("Seats:" + seatId);
+                seatService.bookSeat(seatId);
+            }
             return ResponseEntity.ok("Seat booked successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Internal Server Error");

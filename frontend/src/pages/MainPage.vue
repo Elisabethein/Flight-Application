@@ -27,16 +27,21 @@
       </div>
 
       <div class="filter">
+        <label for="time">Time:</label>
+        <input type="time" id="time" v-model="selectedTime" />
+      </div>
+
+      <div class="filter">
         <label for="price">Price:</label>
         <input type="number" id="price" v-model="selectedPrice" placeholder="Maximum Price" />
       </div>
 
-      <button @click="fetchFlights">Search</button>
+      <button @click="filterFlights">Search</button>
     </div>
 
     <div class="flights">
       <FlightComponent
-          v-for="(flight, index) in flights"
+          v-for="(flight, index) in paginatedFlights"
           :key="index"
           :destination="flight.destination"
           :from="flight.departure"
@@ -46,6 +51,21 @@
           :price="flight.price"
           :id="flight.id"
       />
+    </div>
+
+    <div class="notification">
+      <p v-if="!filteredFlights.length">No flights found</p>
+    </div>
+
+    <div class="pagination">
+      <button
+          v-for="page in totalPages"
+          :key="page"
+          :class="{ active: currentPage === page }"
+          @click="goToPage(page)"
+      >
+        {{ page }}
+      </button>
     </div>
   </div>
 </template>
@@ -59,11 +79,15 @@ export default {
   data() {
     return {
       flights: [],
+      currentPage: 1,
+      flightsPerPage: 5,
       selectedFrom: "",
       selectedTo: "",
       selectedDate: "",
+      selectedTime: "",
       selectedPrice: "",
-      dropdowns: { from: false, to: false }
+      dropdowns: { from: false, to: false },
+      filteredFlights: [],
     };
   },
   computed: {
@@ -73,16 +97,13 @@ export default {
     uniqueDestinations() {
       return [...new Set(this.flights.map(flight => flight.destination))];
     },
-    filteredFlights() {
-      return this.flights.filter(flight => {
-        return (
-            (!this.selectedFrom || flight.departure === this.selectedFrom) &&
-            (!this.selectedTo || flight.destination === this.selectedTo) &&
-            (!this.selectedDate || flight.departureTime.startsWith(this.selectedDate)) &&
-            (!this.selectedPrice || flight.price <= parseFloat(this.selectedPrice))
-        );
-      });
-    }
+    paginatedFlights() {
+      const startIndex = (this.currentPage - 1) * this.flightsPerPage;
+      return this.filteredFlights.slice(startIndex, startIndex + this.flightsPerPage);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredFlights.length / this.flightsPerPage);
+    },
   },
   methods: {
     async fetchFlights() {
@@ -91,6 +112,12 @@ export default {
 
         if (response.ok) {
           this.flights = await response.json();
+
+          // sorting ascendingly based on the departure time
+          this.flights.sort((a, b) => a.departureTime.localeCompare(b.departureTime));
+
+          this.filteredFlights = [...this.flights];
+
         } else {
           console.error("Failed to fetch flights");
         }
@@ -98,12 +125,68 @@ export default {
         console.error("Failed to fetch flights", error);
       }
     },
+    filterFlights() {
+      this.currentPage = 1;
+
+      // Filter flights by departure, destination, date, and price
+      let filtered = this.flights.filter((flight) => {
+        const matchesDeparture = this.selectedFrom ? flight.departure === this.selectedFrom : true;
+        const matchesDestination = this.selectedTo ? flight.destination === this.selectedTo : true;
+        const matchesPrice = this.selectedPrice ? flight.price <= parseFloat(this.selectedPrice) : true;
+        const matchesDate = this.selectedDate ? flight.departureTime.startsWith(this.selectedDate) : true;
+
+        const flightTime = new Date(flight.departureTime);
+        const flightTimeString = `${flightTime.getHours().toString().padStart(2, '0')}:${flightTime.getMinutes().toString().padStart(2, '0')}`;
+        const matchesTime = this.selectedTime ? flightTimeString === this.selectedTime : true;
+
+        return matchesDeparture && matchesDestination && matchesPrice && matchesDate && matchesTime
+      });
+
+      // Step 2: If no results are found, search for two connecting flights
+      /**
+      if (filtered.length === 0) {
+        filtered = [];
+
+        this.flights.forEach((firstFlight) => {
+          if (firstFlight.departure === this.selectedFrom) {
+            const possibleConnections = this.flights.filter(
+                (secondFlight) =>
+                    secondFlight.departure === firstFlight.destination &&
+                    secondFlight.destination === this.selectedTo &&
+                    secondFlight.departureTime > firstFlight.arrivalTime &&
+                    this.isSameDay(firstFlight.arrivalTime, secondFlight.departureTime) || this.isPreviousDay(firstFlight.arrivalTime, secondFlight.departureTime) &&
+                    (this.selectedDate ? secondFlight.departureTime.startsWith(this.selectedDate) : true)
+            );
+            //console.log(possibleConnections);
+            possibleConnections.forEach((secondFlight) => {
+              filtered.push([firstFlight, secondFlight]);
+            });
+          }
+        });
+      }
+          **/
+      this.filteredFlights = filtered;
+    },
+    isSameDay(firstDate, secondDate) {
+      const first = new Date(firstDate);
+      const second = new Date(secondDate);
+      return first.toDateString() === second.toDateString();
+    },
+    isPreviousDay(firstDate, secondDate) {
+      const first = new Date(firstDate);
+      const second = new Date(secondDate);
+      return second.getDate() === first.getDate() - 1;
+    },
     toggleDropdown(filter) {
       this.dropdowns[filter] = !this.dropdowns[filter];
     },
     selectFilter(filter, value) {
       this["selected" + filter.charAt(0).toUpperCase() + filter.slice(1)] = value;
       this.dropdowns[filter] = false;
+    },
+    goToPage(page) {
+      if (page < 1 || page > this.totalPages) return; // Prevent going out of bounds
+      this.currentPage = page;
     },
   },
   mounted() {

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -46,12 +47,12 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception{
         if (flightRepository.count() == 0) {
             fetchAndStoreData();
-        }
 
-        List<Flight> flights = flightRepository.findAll();
+            List<Flight> flights = flightRepository.findAll();
 
-        for (Flight flight : flights) {
-            generateSeats(flight);
+            for (Flight flight : flights) {
+                generateSeats(flight);
+            }
         }
     }
     private void fetchAndStoreData() throws JsonProcessingException {
@@ -64,14 +65,17 @@ public class DataInitializer implements ApplicationRunner {
         JsonNode rootNode = objectMapper.readTree(result);
         JsonNode flights = rootNode.get("data");
 
-        List<Flight> flightList = new ArrayList<>();
-
         if (!flights.isArray() || flights.isEmpty()) {
             System.err.println("No flight data found.");
             return;
         }
 
-        for(int i = 0; i < Math.min(20, flights.size()); i++) {
+        List<Flight> flightList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        int flightCount = Math.min(35, flights.size());
+
+        for (int i = 0; i < flightCount; i++) {
             JsonNode flightNode = flights.get(i);
 
             String departure = flightNode.path("departure").path("airport").asText(null);
@@ -85,7 +89,6 @@ public class DataInitializer implements ApplicationRunner {
             }
 
             double price = 100 + random.nextInt(400);
-
             ZonedDateTime departureDateTime = ZonedDateTime.parse(departureTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             ZonedDateTime arrivalDateTime = ZonedDateTime.parse(arrivalTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
@@ -93,10 +96,22 @@ public class DataInitializer implements ApplicationRunner {
 
             long hours = duration.toHours();
             long minutes = duration.toMinutes() % 60;
-
             String flightTime = hours + "h " + minutes + "m";
 
-            Flight flight = new Flight(departure, destination, departureTime, arrivalTime, flightTime, price);
+            // Assign a new departure date based on the current index
+            LocalDate newDepartureDate = today.plusDays(i % 7);
+            ZonedDateTime newDepartureDateTime = newDepartureDate.atTime(departureDateTime.toLocalTime()).atZone(departureDateTime.getZone());
+            ZonedDateTime newArrivalDateTime = newDepartureDateTime.plus(duration);
+
+            Flight flight = new Flight(
+                    departure,
+                    destination,
+                    newDepartureDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                    newArrivalDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                    flightTime,
+                    price
+            );
+
             flightList.add(flight);
         }
 
@@ -124,10 +139,10 @@ public class DataInitializer implements ApplicationRunner {
         for (int row = 1; row <= 10; row++) {
             for (int col = 1; col <= 6; col++) {
                 String seatNumber = row + seatLetters[col - 1];
-                String seatClass = col <= 2 ? seatClasses[2] : col <= 4 ? seatClasses[1] : seatClasses[0];
-                double seatPrice = basePrice + (col <= 2 ? 1 : col <= 4 ? 0.5 : 0) * basePrice;
+                String seatClass = row <= 2 ? seatClasses[2] : row <= 4 ? seatClasses[1] : seatClasses[0];
+                double seatPrice = basePrice + (row <= 2 ? 1 : row <= 4 ? 0.5 : 0) * basePrice;
                 boolean isBooked = bookedSeatNumbers.contains(seatNumber);
-                boolean hasLegRoom = col <= 4 || row == 6;
+                boolean hasLegRoom = row <= 4 || row == 6;
 
                 Seat seat = new Seat(seatNumber, seatClass, seatPrice, flight, isBooked, hasLegRoom);
                 seats.add(seat);

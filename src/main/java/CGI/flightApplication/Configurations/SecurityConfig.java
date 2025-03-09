@@ -25,10 +25,11 @@ public class SecurityConfig {
                     return configuration;
                 }))
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**")) // CSRF ignored for API endpoints
+                        .ignoringRequestMatchers("api/**")) // CSRF ignored for API endpoints
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("api/flights/**").permitAll()
                         .requestMatchers("api/seats/**").permitAll()
+                        .requestMatchers("api/seats/book").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
