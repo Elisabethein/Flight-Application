@@ -31,25 +31,17 @@ public class FlightController {
 
     @GetMapping("/all")
     public ResponseEntity<List<Flight>> getAllFlights() {
-        try {
-            return ResponseEntity.ok(flightService.getAllFlights());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+        return ResponseEntity.ok(flightService.getAllFlights());
     }
 
     @GetMapping("/flight/{id}")
     public ResponseEntity<FlightDTO> getFlightById(@PathVariable UUID id) {
-        try {
-            Flight flight = flightService.getFlightById(id);
-            List<Seat> seats = seatService.getSeatsByFlight(flight);
+        Flight flight = flightService.getFlightById(id);
+        List<Seat> seats = seatService.getSeatsByFlight(flight);
 
-            FlightDTO flightDTO = new FlightDTO(flight, seats);
+        FlightDTO flightDTO = new FlightDTO(flight, seats);
 
-            return ResponseEntity.ok(flightDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+        return ResponseEntity.ok(flightDTO);
 
     }
 }

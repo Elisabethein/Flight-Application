@@ -42,7 +42,11 @@ import streetImage from "../assets/street.png";
        try {
          const response = await fetch("http://localhost:8080/api/flights/flight/" + this.id);
          if (!response.ok) {
-           throw new Error("Failed to fetch data");
+           if (response.status === 404) {
+              alert("Flight not found");
+           } else {
+             throw new Error("Failed to fetch data");
+           }
          }
 
          const data = await response.json();
@@ -75,7 +79,7 @@ import streetImage from "../assets/street.png";
   box-sizing: border-box;
   box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.2s ease-in-out;
-  width: 100vw;
+  width: 45vw;
 }
 
 .flight:not(.non-clickable):hover {

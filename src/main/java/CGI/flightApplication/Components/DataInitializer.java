@@ -44,7 +44,8 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception{
+    public void run(ApplicationArguments args) throws Exception {
+        // Initialize the database with flight data if it is empty
         if (flightRepository.count() == 0) {
             fetchAndStoreData();
 
@@ -55,6 +56,15 @@ public class DataInitializer implements ApplicationRunner {
             }
         }
     }
+
+    /**
+     * Fetches flight data from the AviationStack API and stores it in the database.
+     * The first 35 flights are stored in the database, with the dates of the departure and arrival modified to be within the next 7 days.
+     * The price of each flight is randomly generated between 100 and 500.
+     * The last two custom-made flights are used to test the connecting flight feature. (JFK -> LAX -> SFO)
+     *
+     * @throws JsonProcessingException
+     */
     private void fetchAndStoreData() throws JsonProcessingException {
         String url = "https://api.aviationstack.com/v1/flights?access_key=" + apiKey;
 
@@ -98,7 +108,6 @@ public class DataInitializer implements ApplicationRunner {
             long minutes = duration.toMinutes() % 60;
             String flightTime = hours + "h " + minutes + "m";
 
-            // Assign a new departure date based on the current index
             LocalDate newDepartureDate = today.plusDays(i % 7);
             ZonedDateTime newDepartureDateTime = newDepartureDate.atTime(departureDateTime.toLocalTime()).atZone(departureDateTime.getZone());
             ZonedDateTime newArrivalDateTime = newDepartureDateTime.plus(duration);
@@ -115,9 +124,42 @@ public class DataInitializer implements ApplicationRunner {
             flightList.add(flight);
         }
 
+        // For testing the connecting flight feature
+        Flight flight1 = new Flight(
+                "JFK",
+                "LAX",
+                "2025-03-11T07:00:00Z",
+                "2025-03-11T10:40:00Z",
+                "3h 40m",
+                200.0
+        );
+
+        Flight flight2 = new Flight(
+                "LAX",
+                "SFO",
+                "2025-03-12T02:30:00Z",
+                "2025-03-12T08:00:00Z",
+                "5h 30m",
+                100.0
+        );
+
+        flightList.add(flight1);
+        flightList.add(flight2);
+
         flightRepository.saveAll(flightList);
     }
 
+    /**
+     * Generates seats for a given flight.
+     * There are a total of 60 seats in the plane. Each seat is identified by a row number (1-10) and a letter (A-F).
+     * The first two rows are first class, the next two rows are business class, and the rest are economy class.
+     * The price of each seat is based on the base price of the flight and the class of the seat.
+     * Seats in the first two rows have a 100% price increase, and seats in the next two rows have a 50% price increase.
+     * Seats in the first class, business class, and row 6 (near exit) have extra legroom.
+     * 30% of the seats are randomly marked as booked.
+     *
+     * @param flight
+     */
     private void generateSeats(Flight flight) {
         int totalSeats = 60;
         int bookedSeats = (int) (totalSeats * 0.3);

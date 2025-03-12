@@ -1,5 +1,10 @@
 <template>
+  <div class="body">
   <div class="main">
+    <div class="welcome">
+      <h1>Find the Best Flights for Your Journey!</h1>
+
+
     <div class="filters">
       <div class="filter" @click="toggleDropdown('from')">
         <label for="from">From:</label>
@@ -36,21 +41,31 @@
         <input type="number" id="price" v-model="selectedPrice" placeholder="Maximum Price" />
       </div>
 
-      <button @click="filterFlights">Search</button>
+      <button class="src-button" @click="filterFlights">Search</button>
     </div>
 
+  </div>
+
     <div class="flights">
-      <FlightComponent
-          v-for="(flight, index) in paginatedFlights"
-          :key="index"
-          :destination="flight.destination"
-          :from="flight.departure"
-          :departure="flight.departureTime"
-          :arrival="flight.arrivalTime"
-          :duration="flight.flightTime"
-          :price="flight.price"
-          :id="flight.id"
-      />
+      <div class="flight-row" v-for="(pair, index) in flightPairs" :key="index">
+        <template v-if="pair.length === 2">
+          <ConnectingFlightComponent
+              :firstFlight="pair[0]"
+              :secondFlight="pair[1]"
+          />
+        </template>
+        <template v-else>
+          <FlightComponent
+              :destination="pair[0].destination"
+              :from="pair[0].departure"
+              :departure="pair[0].departureTime"
+              :arrival="pair[0].arrivalTime"
+              :duration="pair[0].flightTime"
+              :price="pair[0].price"
+              :id="pair[0].id"
+          />
+        </template>
+      </div>
     </div>
 
     <div class="notification">
@@ -68,19 +83,24 @@
       </button>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
 import FlightComponent from "@/components/FlightComponent.vue";
+import ConnectingFlightComponent from "@/components/ConnectingFlightComponent.vue";
 
 export default {
   name: "MainPage",
-  components: {FlightComponent},
+  components: {
+    FlightComponent,
+    ConnectingFlightComponent
+  },
   data() {
     return {
       flights: [],
       currentPage: 1,
-      flightsPerPage: 5,
+      flightsPerPage: 6,
       selectedFrom: "",
       selectedTo: "",
       selectedDate: "",
@@ -104,6 +124,15 @@ export default {
     totalPages() {
       return Math.ceil(this.filteredFlights.length / this.flightsPerPage);
     },
+    flightPairs() {
+      return this.paginatedFlights.map(flight => {
+        if (Array.isArray(flight)) {
+          return flight; // Keep flight pairs as they are
+        } else {
+          return [flight]; // Wrap single flights in an array for consistent structure
+        }
+      });
+    }
   },
   methods: {
     async fetchFlights() {
@@ -143,7 +172,7 @@ export default {
       });
 
       // Step 2: If no results are found, search for two connecting flights
-      /**
+
       if (filtered.length === 0) {
         filtered = [];
 
@@ -154,17 +183,16 @@ export default {
                     secondFlight.departure === firstFlight.destination &&
                     secondFlight.destination === this.selectedTo &&
                     secondFlight.departureTime > firstFlight.arrivalTime &&
-                    this.isSameDay(firstFlight.arrivalTime, secondFlight.departureTime) || this.isPreviousDay(firstFlight.arrivalTime, secondFlight.departureTime) &&
+                    (this.isSameDay(firstFlight.arrivalTime, secondFlight.departureTime) || this.isPreviousDay(secondFlight.departureTime, firstFlight.arrivalTime)) &&
                     (this.selectedDate ? secondFlight.departureTime.startsWith(this.selectedDate) : true)
             );
-            //console.log(possibleConnections);
             possibleConnections.forEach((secondFlight) => {
               filtered.push([firstFlight, secondFlight]);
             });
           }
         });
       }
-          **/
+
       this.filteredFlights = filtered;
     },
     isSameDay(firstDate, secondDate) {
@@ -196,6 +224,16 @@ export default {
 </script>
 
 <style scoped>
+.body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: url("../assets/gradient.png");
+  background-size: cover;
+  border-radius: 20px;
+  min-height: 100vh;
+}
+
 .main {
   display: flex;
   flex-direction: column;
@@ -204,14 +242,17 @@ export default {
   text-align: center;
   padding: 30px 30px 100px;
   box-sizing: border-box;
+  margin-top: 5px;
+
 }
 
 .filters {
   display: flex;
   justify-content: center;
   gap: 10px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   padding: 10px;
+  align-items: center;
 }
 
 .filter {
@@ -224,7 +265,7 @@ export default {
   border-radius: 10px;
   box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  width: 140px;
+  width: 200px;
 }
 
 .selected {
@@ -273,9 +314,18 @@ input {
 .flights {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 20px;
   width: 100%;
+}
+
+.flight-row {
+  gap: 20px;
+  width: calc(50% - 10px);
+  justify-content: center;
+}
+
+.flight-row > * {
+  flex: 1; /* Ensures equal width */
 }
 
 button {
@@ -286,5 +336,24 @@ button {
   color: white;
   border-radius: 5px;
   cursor: pointer;
+}
+
+button:hover {
+  background-color: #c7562b;
+}
+
+.src-button {
+  padding: 12px 24px;
+  font-size: 18px;
+  background-color: #ff7f50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.src-button:hover {
+  background-color: #c7562b;
 }
 </style>

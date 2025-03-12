@@ -1,16 +1,19 @@
 <template>
   <div class="body">
-  <div class="flight">
-    <FlightComponent
-        :destination="flight?.destination"
-        :from="flight?.departure"
-        :departure="flight?.departureTime"
-        :arrival="flight?.arrivalTime"
-        :duration="flight?.flightTime"
-        :price="flight?.price"
-        :disableClick="true"
-    />
-  </div>
+    <div class="back">
+      <button  @click="$router.push('/')">← Back</button>
+    </div>
+
+    <div class="flight">
+        <FlightComponent :key="flight.id"
+                         :destination="flight.destination"
+                         :from="flight.departure"
+                         :departure="flight.departureTime"
+                         :arrival="flight.arrivalTime"
+                         :duration="flight.flightTime"
+                         :price="flight.price"
+                         :disableClick="true" />
+    </div>
 
     <div class="filters">
 
@@ -52,9 +55,8 @@
         </div>
       </div>
 
-      <div class="filter">
-        <button @click="showSeats">Search</button>
-      </div>
+      <button class="src-button" @click="showSeats">Search</button>
+
 
     </div>
 
@@ -68,7 +70,7 @@
           <h3>Selected seats:</h3>
           <ul>
             <li v-for="seat in selectedSeats" :key="seat.seatNumber">
-              <strong>{{ seat.seatNumber }}:</strong> {{ seat.seatPrice }} €
+              <strong>{{ seat.seatNumber }} ({{ seat.seatClass }} Class) :</strong> {{ seat.seatPrice }} €
             </li>
           </ul>
         </div>
@@ -229,7 +231,11 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to book seats");
+          if (response.status === 409) {
+            alert("One or more seats have already been booked!");
+          } else {
+            throw new Error("Failed to book seats");
+          }
         }
 
         alert(
@@ -267,6 +273,13 @@ export default {
 </script>
 
 <style scoped>
+.body {
+  margin-top: 5px;
+  background-image: url("../assets/gradient.png");
+  border-radius: 20px;
+  padding: 20px;
+}
+
 .flight {
   display: flex;
   justify-content: center;
@@ -289,6 +302,8 @@ export default {
   background-color: #fef2ea;
   padding: 10px;
   border-radius: 10px;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 select {
@@ -305,7 +320,6 @@ select, input[type="checkbox"] {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
 }
 .seat-info {
   display: flex;
@@ -323,9 +337,11 @@ select, input[type="checkbox"] {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding: 10px;
+  padding: 30px 20px 10px;
   background-color: #fef2ea;
   border-radius: 10px;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .selected-seats ul {
@@ -338,9 +354,11 @@ select, input[type="checkbox"] {
 }
 
 .total-price {
-  padding: 10px;
+  padding: 10px 20px;
   background-color: #fef2ea;
   border-radius: 10px;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .seat-selector {
@@ -369,7 +387,6 @@ select, input[type="checkbox"] {
   align-items: center;
   gap: 5px;
   padding: 10px;
-  background-color: #FEF2EA;
   border-radius: 10px;
   min-width: 25vw;
 }
@@ -388,4 +405,21 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.src-button {
+  padding: 12px 24px;
+  font-size: 18px;
+  background-color: #ff7f50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.src-button:hover, .back buton:hover, button:hover{
+  background-color: #c7562b;
+}
+
+
 </style>

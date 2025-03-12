@@ -155,6 +155,7 @@ export default {
   padding: 20px 40px;
   background-color: white;
   border-radius: 10px;
+  box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.2);
 }
 
 .row {

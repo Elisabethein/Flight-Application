@@ -1,7 +1,7 @@
 package CGI.flightApplication.Services;
 
 import CGI.flightApplication.Entities.Flight;
-import CGI.flightApplication.Entities.Seat;
+import CGI.flightApplication.Exceptions.FlightNotFoundException;
 import CGI.flightApplication.Repositories.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,6 @@ public class FlightService {
     }
 
     public Flight getFlightById(UUID id) {
-        return flightRepository.findById(id).orElse(null);
+        return flightRepository.findById(id).orElseThrow(() -> new FlightNotFoundException(id));
     }
 }
