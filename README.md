@@ -166,25 +166,66 @@ The application uses the following environment variables:
 1. Clone the repository
 2. Open the project in your favorite IDE
 3. Set the environment variables in your IDE
-4. Run the FlightApplication class in the backend
-5. Run the frontend by navigating to the frontend folder and running the following commands:
+4. Modify the application.properties file in the resources folder to match your database configuration
+5. Run the FlightApplication class in the backend
+6. Run the frontend by navigating to the frontend folder and running the following commands:
     ```
     npm install
     npm run serve
     ```
-6. Open the browser and navigate to http://localhost:5173
 7. The application should be running
 
 ### Variant 2: Running the application using Docker
 
+This method allows you to run the entire application (backend, frontend, and database) using Docker without needing to install anything manually.
+The compose file is already configured to run the application on the specified ports. The backend and frontend images are published in the following link: https://hub.docker.com/repository/docker/elisabethein/flight-application/general
+
+
+#### Prerequisites
+
+Docker installed on your machine
+
+#### Steps
+
+1. Clone the repository
+2. Create an .env file in the root of the project with the following content:
+    ```
+    DB_USERNAME=postgres
+    DB_PASSWORD=postgres
+    API_KEY
+    ```
+3. Run the following command in the root of the project:
+    ```
+    docker-compose up -d
+    ```
+4. The application should be running
+   * The backend is running on port 8080
+   * The frontend is running on port 80
+   * The database is running on port 5432
+5. Open the browser and navigate to http://localhost
+
+In case you want to stop the application, you can run the following command:
+   ```
+    docker-compose down
+   ```
+
+In case you want to pull the backend and frontend images manually, you can run the following commands:
+   ```
+    docker pull elisabethein/flight-application:backend-latest
+    docker pull elisabethein/flight-application:frontend-latest
+   ```
+
 ## Personal notes:
 
-This project was fairly simple to me, as I have experience in both Java and Vue.js. The most challenging part was to implement the connecting flights feature, as I had to come up with a solution to find the connecting flights based on the given requirements. I am happy with the result and I believe that the application is working as expected.
+This project was fairly simple to me, as I have experience in both Java and Vue.js. 
 I implemented all the base requirements and additional requirements. I would have implemented the user authentication if the requirement was given, as it sounds like a logical next step for the application. Yet, considering the time limit, I decided to focus on the main requirements.
-The whole project took me a few days to complete (perhaps about 10 hours in total), as I believe the backend was really simple. I spent most of my time on the frontend, making sure the flow was logical and the user experience was good. Yet I believe the design could be improved, as I am not a designer and I focused more on the functionality of the application.
-The most challenging part was to actually run the project and the tests as I faced some issues with the Data Initializer and the test configurations, yet they were not significant and I was able to solve them quickly.
 
-For code refactoring, ChatGPT was used. The tool was able to provide some suggestions for the code, but most of the suggestions were not relevant to the project. The tool was able to find some typos and suggest some code improvements, but the suggestions were not significant, e.g. creating custom-made exceptions.
+The whole project took me a few days to complete (perhaps about 10 hours in total), as I believe the backend was really simple. I spent most of my time on the frontend, making sure the flow was logical and the user experience was good. Yet I believe the design could be improved, as I am not a designer and I focused more on the functionality of the application.
+
+The most challenging part was to implement the connecting flights feature, as I had to come up with a solution to find the connecting flights based on the given requirements.
+Another challenging part was to actually run the project and the tests as I faced some issues with the Data Initializer and the test configurations, yet they were not significant, and I was able to solve them quickly.
+
+For code refactoring, ChatGPT was used. The tool was able to provide some suggestions for the code, but most of the suggestions were not relevant to the project. The tool was able to find some typos and suggest some code improvements, but the suggestions were not significant, e.g. suggesting to create custom-made exceptions.
 
 The project was a good learning experience for me, as I was able to practice my Java and Vue.js skills. I am happy with the result and I believe the application is working as expected. I am looking forward to hearing your feedback on the project.
 
