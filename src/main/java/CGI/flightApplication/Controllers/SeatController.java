@@ -1,6 +1,7 @@
 package CGI.flightApplication.Controllers;
 
 import CGI.flightApplication.Services.SeatService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,13 +14,9 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/seats")
+@RequiredArgsConstructor
 public class SeatController {
     private final SeatService seatService;
-
-    @Autowired
-    public SeatController(SeatService seatService) {
-        this.seatService = seatService;
-    }
 
     @PutMapping("/book")
     public ResponseEntity<String> bookSeat(@RequestBody List<UUID> seatIds) {

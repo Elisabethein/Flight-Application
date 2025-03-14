@@ -1,11 +1,17 @@
 package CGI.flightApplication.Entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "seats")
+@Data
+@Getter
+@Setter
 public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

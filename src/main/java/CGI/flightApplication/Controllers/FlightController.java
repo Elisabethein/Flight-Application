@@ -5,6 +5,7 @@ import CGI.flightApplication.Entities.Flight;
 import CGI.flightApplication.Entities.Seat;
 import CGI.flightApplication.Services.FlightService;
 import CGI.flightApplication.Services.SeatService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,17 +18,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/flights")
+@RequiredArgsConstructor
 public class FlightController {
 
     private final FlightService flightService;
 
     private final SeatService seatService;
-
-    @Autowired
-    public FlightController(FlightService flightService, SeatService seatService) {
-        this.flightService = flightService;
-        this.seatService = seatService;
-    }
 
     @GetMapping("/all")
     public ResponseEntity<List<Flight>> getAllFlights() {

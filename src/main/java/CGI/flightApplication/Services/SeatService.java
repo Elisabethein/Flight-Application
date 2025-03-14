@@ -4,6 +4,7 @@ import CGI.flightApplication.Entities.Flight;
 import CGI.flightApplication.Entities.Seat;
 import CGI.flightApplication.Exceptions.SeatAlreadyBookedException;
 import CGI.flightApplication.Repositories.SeatRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +13,10 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class SeatService {
 
     private final SeatRepository seatRepository;
-
-    @Autowired
-    public SeatService(SeatRepository seatRepository) {
-        this.seatRepository = seatRepository;
-    }
 
     public List<Seat> getSeatsByFlight(Flight flight) {
         return seatRepository.findByFlight(flight);
