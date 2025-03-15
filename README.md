@@ -150,7 +150,7 @@ The frontend tests are implemented using Cypress. The tests are written in JavaS
 
 ## Port Configuration
 
-The backend is running on port 8080 and the frontend is running on port 5173. The database is running on port 5432.
+The backend is running on port 8080 and the frontend is running either on port 5173 (in local mode) or on port 80 (using docker). The database is running on port 5432.
 
 ## Environment Variables
 
@@ -167,19 +167,19 @@ The application uses the following environment variables:
 2. Open the project in your favorite IDE
 3. Set the environment variables in your IDE
 4. Modify the application.properties file in the resources folder to match your database configuration
-5. Run the FlightApplication class in the backend
-6. Run the frontend by navigating to the frontend folder and running the following commands:
+5. Modify the SecurityConf class to accept requests from your frontend address
+6. Run the FlightApplication class in the backend
+7. Run the frontend by navigating to the frontend folder and running the following commands:
     ```
     npm install
     npm run serve
     ```
-7. The application should be running
+8. The application should be running
 
 ### Variant 2: Running the application using Docker
 
 This method allows you to run the entire application (backend, frontend, and database) using Docker without needing to install anything manually.
 The compose file is already configured to run the application on the specified ports. The backend and frontend images are published in the following link: https://hub.docker.com/repository/docker/elisabethein/flight-application/general
-
 
 #### Prerequisites
 
@@ -190,9 +190,9 @@ Docker installed on your machine
 1. Clone the repository
 2. Create an .env file in the root of the project with the following content:
     ```
-    DB_USERNAME=postgres
-    DB_PASSWORD=postgres
-    API_KEY
+    DB_USERNAME=your-username
+    DB_PASSWORD=your-password
+    API_KEY=your-api-key
     ```
 3. Run the following command in the root of the project:
     ```
@@ -225,7 +225,7 @@ The whole project took me a few days to complete (perhaps about 10 hours in tota
 The most challenging part was to implement the connecting flights feature, as I had to come up with a solution to find the connecting flights based on the given requirements.
 Another challenging part was to actually run the project and the tests as I faced some issues with the Data Initializer and the test configurations, yet they were not significant, and I was able to solve them quickly.
 
-For code refactoring, ChatGPT was used. The tool was able to provide some suggestions for the code, but most of the suggestions were not relevant to the project. The tool was able to find some typos and suggest some code improvements, but the suggestions were not significant, e.g. suggesting to create custom-made exceptions.
+For code refactoring, ChatGPT was used. The tool was able to find some typos and suggest some code improvements, but the suggestions were not significant, e.g. suggesting to create custom-made exceptions.
 
 The project was a good learning experience for me, as I was able to practice my Java and Vue.js skills. I am happy with the result and I believe the application is working as expected. I am looking forward to hearing your feedback on the project.
 
